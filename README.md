@@ -15,4 +15,7 @@ It asks for the number of people you need to feed, as well as how many donuts yo
 
 adapted from here: http://cscircles.cemc.uwaterloo.ca/6d-design/  
 thanks cscircles! :D
+
+some notes to myself:  
+root.bind('< Return >',donutCount) alone doesn't work, but getting Return to work happens if I first make a new function (i.e. def onclick():), make event="None", and execute donutCount() under onclick(). 
  
