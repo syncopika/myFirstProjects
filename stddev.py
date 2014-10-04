@@ -18,6 +18,6 @@ def stddev():
     d=list(float(number)-c for number in b.split(','))
     e=list(float(number)**2 for number in d)
     f = math.sqrt((sum(e))/len(a))
-    print( str(f) + ' is the standard deviation.')
+    print(str(f) + ' is the standard deviation.')
     
 #much thanks to stackoverflow for showing me how to make a generator to simplify things (i.e. float(x) for x in b.split(','))
