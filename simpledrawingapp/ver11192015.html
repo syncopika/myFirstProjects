@@ -10,6 +10,17 @@ things to do:
 -add more different brushes!
 -can I clean up my code more? there might be redundancy/useless statements
 -reorganize page! canvas on left, toolbar on right? can I make it customisable? 
+
+some 'bugs':
+-sometimes when I reset, I'll get a non-continuous brush stroke (the little dots) but then as I keep moving
+-the mouse it corrects itself. probably has to do with the arrays?
+
+-cbrush (crazy brush) seems a little weird. It seems to be more troublesome than long brush, but I think it has to
+-do with the formula associated with getting the pattern that cbrush has. it's based on clickX[i-2],clickY[i-1]+10.
+-somehow, i think because of this formula, when I try to draw two separate fragments, one at one end of the canvas, 
+-and one at another end, a connection is drawn automatically between the two fragments when I clickdown to start the 2nd fragment.
+-the long brush, which is clickX[i],clickY[i]+10, doesn't have the same problem.
+
 -->
 
 <!DOCTYPE html>
@@ -154,6 +165,7 @@ $('#canvas').mouseup(function(e) {
 //and the new location will be connected. resetting helps prevent unwanted connections between
 //points on the canvas. but this problem didn't occur with long brush...
 paint = false;
+if(cbrush === 1){
 clickColor = new Array();
 clickX = new Array();
 clickY = new Array();
