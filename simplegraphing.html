@@ -10,14 +10,14 @@
 
 <body>
 <!-- a canvas should go here so we can plot coordinates! -->
-<!-- and an input box to input number of coordinates needed. also one for inputting value of x! -->
+<!-- and an input box to input number of coordinates needed, for inputting value of x, and the equation! -->
 
 </body>
 
 <script>
 //pretty basic right now, but I can calculate coordinates of some quadratic equations with this! :D 
 
-var a = 'y=2x^2+5'
+var a = 'y=2x^2+5' //input should just be like 2x^2+5, no y=... needed.
 var b = a.split('=')
 var exp = /[x^\d]*[^+-]/g
 var c = b[1].match(exp)
