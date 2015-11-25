@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+</style>
+
+<head>
+<title>simple graphing</title>
+</head>
+
+<body>
+<!-- a canvas should go here so we can plot coordinates! -->
+<!-- and an input box to input number of coordinates needed. also one for inputting value of x! -->
+
+</body>
+
+<script>
+//pretty basic right now, but I can calculate coordinates of some quadratic equations with this! :D 
+
+var a = 'y=2x^2+5'
+var b = a.split('=')
+var exp = /[x^\d]*[^+-]/g
+var c = b[1].match(exp)
+console.log(c)
+var x = 5; //should be input by user
+var numOfCoord = 5; //also input by user
+var xCoord = []; //store x coordinates here
+var yCoord = []; //store y coordinates here
+for(i=0;i<5;i++){ //depends on number of coordinates needed
+  var y = 0;
+  var yTotal = 0;
+  xCoord.push(i)
+  for(j=0;j<c.length;j++){ //depends on x variables in c
+    if(c[j].indexOf('x') !== -1){
+      var coeff = parseInt(c[j][0]);
+      var power = parseInt(c[j][c[j].length-1]); //get the last number (i.e. exponent) in the string
+      var constant = parseInt(c[c.length-1]); //the constant (i.e. number w/ no variable) will always be at the end
+      y = coeff*(Math.pow(i, power)) + constant; //i increments up 1 each loop      
+      yTotal += y; //this is necessary if you have like x^3 + x^2 ...this way x^3 and x^2 are added before getting pushed to the array
+    }
+  }
+  yCoord.push(yTotal);
+}
+console.log(xCoord)
+console.log(yCoord)
+
+
+
+</script>
+
+</html>
