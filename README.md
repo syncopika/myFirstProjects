@@ -28,7 +28,8 @@ made with Python 3.3   10/3/14 10:10 pm, est
 3. a simple drawing app
 -----------------------
 made with HTML, CSS(bootstrap), jQuery/javascript - 11/17/15  5:55 pm, est
-
+  
+please see the corresponding folder for the most current/functional version. 
 wow, I've wanted to make something like this for a long time! can't wait to explore what else I can do with the canvas feature of HTML5! some more ideas might involve working with/making 3D objects, etc...
 
 many thanks to Mr. Malone here:  http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/
