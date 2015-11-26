@@ -37,4 +37,4 @@ many thanks to Mr. Malone here:  http://www.williammalone.com/articles/create-ht
 ------------------------
 made with HTML, CSS(bootstrap), jQuery/javascript 
   
-please see the simplegraphingapp folder for the most current and functional version. the one here is just a sketch of some components I needed, mainly the part to calculate the equation input by the user. right now it can handle simple quadratic and cubic functions, and only positive constants and coefficients. 
+please see the simplegraphingapp folder for the most current and functional version. the one here is just a sketch of some components I needed, mainly the part to calculate the equation input by the user. right now the most current version can handle simple quadratic and cubic functions, and only positive constants and coefficients. 
