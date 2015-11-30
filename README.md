@@ -33,10 +33,14 @@ made with HTML, CSS(bootstrap), jQuery/javascript - 11/17/15  5:55 pm, est
 wow, I've wanted to make something like this for a long time! can't wait to explore what else I can do with the canvas feature of HTML5! some more ideas might involve working with/making 3D objects, etc...
 
 many thanks to Mr. Malone here:  http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/
+  
+try/see it here: http://syncopika.tumblr.com/htmldrawapp  
 
 4. a simple graphing app
 ------------------------
 made with HTML, CSS(bootstrap), jQuery/javascript 
   
 *please see the simplegraphingapp folder for the most current and functional version.*  
-the one here is just a sketch of some components I needed, mainly the part to calculate the equation input by the user. right now the most current version can handle simple quadratic and cubic functions, and only positive constants and coefficients. 
+the one here is just a sketch of some components I needed, mainly the part to calculate the equation input by the user. right now the most current version can handle simple quadratic and cubic functions, and only positive constants and coefficients.  
+  
+try/see it here: http://syncopika.tumblr.com/simplegraphing
