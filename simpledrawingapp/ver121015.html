@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>drawing app</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+</head>
+
+<style>
+h1,p{
+text-align:center;
+}
+
+#toolbar{
+margin: 10px auto;
+border: black 1px solid;
+padding:2px;
+width:600px;
+text-align:center;
+margin-bottom: 5%;
+}
+#toolbar button{
+margin-bottom: 5px;
+padding-left: 2px;
+padding-right: 2px;
+}
+#canvas0{
+border: 1px black solid;
+background-color: white;
+}
+#counter{
+text-align:center;
+}
+li{
+display:inline-block;
+}
+#picture{
+width: 650px;
+display:block;
+margin:0 auto;
+text-align:center;
+}
+.col-md-12{
+text-align:center;
+}
+
+#colorPicker{
+margin: 0 auto;
+text-align:center;
+}
+#colorTable{
+margin: 0 auto;
+}
+#colorTable tr td{
+border: 1px black solid
+}
+#showColor{
+border: 1px black solid;
+}
+#footer{
+height: 45px;
+}
+</style>
+
+<body>
+<div class='container'>
+
+<div class='row'>
+<h1>a cool drawing app</h1>
+<p>many thanks to <a href='http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/'>this guy</a></p>
+</div>
+
+<div class='row'>
+<div class='col-md-8 col-md-offset-2'>
+<p class='bg-danger'>CAUTION: please avoid drawing on the first canvas, as it is buggy!</p>
+</div>
+</div>
+
+<div class='row'>
+<div class='col-md-12' id='counter'>
+<ul>
+<li id='down'><h1><=</h1></li>
+<li><h2 id='count'></h2></li>
+<li id='up'><h1>=></h1></li>
+</ul>
+</div>
+</div>
+
+<div class='row'>
+
+<div class='col-md-7' id='picture'>
+<canvas id="canvas0" width='600' height='600' class='canvas'></canvas> 
+</div>
+
+<div id='rightCol' class='col-md-5'>
+<h2>toolbar</h2>
+<p>tips:</p>
+<p>-use spacebar to add a new layer!</p>
+<div id='toolbar'>
+<button id='clear' class='btn'>clear</button>
+<button id='reset' class='btn'>reset</button>
+<!--<button id='square' class='btn'>square</button> not working yet!-->
+<button class='size btn' id='5'>normal size</button>
+<button class='size btn' id='2'>small size</button>
+<button id='cbrush' class='btn'>crazy brush</button>
+<button id='lbrush' class='btn'>long brush</button>
+<button class ='color btn' id='#df4b26'>red</button>
+<button class ='color btn' id='#ffcf33'>yellow</button>
+<button class ='color btn' id='#affec4'>green</button>
+<button class ='color btn' id='#ffffff'>eraser</button>
+<button id='addPage'>add another layer</button>
+<button id ='addPrevPage'> clone current layer</button>
+</div>
+
+<div id='colorPicker'>
+<table id='colorTable'>
+<tr>
+<td id='showColor' colspan='3'>SHOW COLOR HERE</td>
+</tr>
+<tr>
+	<td>red</td>
+	<td>blue</td>
+	<td>green</td>
+</tr>
+<tr>
+	<td><input type='text' id='red'></td>
+    <td><input type='text' id='blue'></td>
+	<td><input type='text' id='green'></td>
+</tr>
+<tr>
+	<td colspan='3'><button class='btn' id='setColor'>set color</button></td>
+</tr>
+</table>
+</div>
+
+</div> <!--end toolbar (right col) -->
+
+</div> <!-- end row-->
+
+<div id='footer' class='row'>
+</div>
+
+</div> <!--close container -->
+
+
+<script> 
+//BUGS TO TAKE CARE OF:
+//-CANVAS0 SEEMS TO BE PERMANENTLY ACTIVE.
+//-i.e. when you're in canvas0, you can draw on other canvases. also, canvas0 can be drawn on when you're in another canvas.
+//however! if you click on clear on any canvas, canvas0 suddenly can't be drawn on when in another canvas.
+
+//=>taking care of the below in this version...
+//also, changing the position of the canvas prevents the mousedown/drawing event from happening accurately. the offset-position needs to be looked at? 
+//eventually, I want the toolbar on the right and the canvas on the left. 
+//-the method .getBoundingClientRect() seems to remedy the situation a bit, but see if you can get the offsetLeft and Top directly from the canvas.
+// 
+
+
+//stuff for the page-count thing at the top
+var page = 0;
+var curPage = 0;
+$('#count').html(curPage);//make sure 0 shows up when page loads
+var layerArray = ['canvas0'];
+var curCanvas = layerArray[curPage];
+//store ALL coordinates for current canvas 
+var curClickX = new Array(); 
+var curClickY = new Array();
+var curClickColor = new Array();
+var curClickDrag = new Array();
+var curClickSize = new Array();
+
+//if you kept these variables in draw(), when you switch canvasses you'll get a double-brush i.e. the default one defined by these variables and 
+//also any brush that you currently have like cbrush. 
+var lbrush = 0; 
+var curSize = 5;
+var cbrush = 0;
+var curColor = '#df4b26';
+
+//define draw
+function draw(){
+
+var theCanvas = document.getElementById(curCanvas);
+var rect = theCanvas.getBoundingClientRect();
+var context = document.getElementById(curCanvas).getContext("2d");
+
+var clickX = new Array();
+var clickY = new Array();
+var clickDrag = new Array();
+var clickColor = new Array();
+var clickSize = new Array();
+var paint;
+
+function addClick(x, y, dragging){
+clickX.push(x);
+clickY.push(y);
+clickDrag.push(dragging);
+clickColor.push(curColor);
+clickSize.push(curSize);
+
+//store this data for when you want to clone all the data from one canvas
+//the problem is this stores EVERY coordinate of every pixel you've drawn on 
+//every canvas...
+curClickX.push(x);
+curClickY.push(y);
+curClickDrag.push(dragging);
+curClickColor.push(curColor);
+curClickSize.push(curSize);
+}
+
+
+//define redraw
+function redraw(){
+
+context.lineJoin = 'round';
+
+for(var i = 0; i < clickX.length; i++){
+  context.beginPath();
+  if(clickDrag[i] && i){ //this is the default condition??
+  context.moveTo(clickX[i-1], clickY[i-1]);
+  }
+  else{
+	if(lbrush === 1){
+	cbrush = 0;
+	context.moveTo(clickX[i], clickY[i]+10);
+	}
+	else if(cbrush === 1){
+	lbrush = 0;
+	context.moveTo(clickX[i-2], clickY[i-1]+10);
+	}
+	else{
+	context.moveTo(clickX[i], clickY[i]+1);
+	}
+  }
+  context.lineTo(clickX[i], clickY[i]);
+  context.closePath();
+  context.strokeStyle = clickColor[i];
+  context.lineWidth = clickSize[i]; 
+  context.stroke(); 
+}
+};
+
+//#picture is the container of the canvas, so I used #picture to get the top and left coordinates
+var offsetTop = $('#picture').position()["top"];  
+var offsetLeft = $('#picture').position()["left"];
+
+$('#' + curCanvas).mousedown(function(e){
+if(e.which === 1){ //e.which === 1 means "only when the left-mouse button is clicked..." 1=left, 2=click-wheel, 3=right
+var mouseX = e.pageX - offsetLeft-17//this.offsetLeft;
+var mouseY = e.pageY - offsetTop-5//this.offsetTop;
+paint = true;
+addClick(mouseX, mouseY);
+redraw();
+}
+});
+
+$('#' + curCanvas).mousemove(function(e) {
+  if (paint){
+     if(cbrush === 1 || lbrush === 1){
+	 addClick(e.pageX - offsetLeft-17, e.pageY - offsetTop-5);
+	 }
+	 else{
+	 //set dragging to 1 = solid lines when moving the mouse. 
+	 addClick(e.pageX - offsetLeft-17, e.pageY - offsetTop-5, 1);
+	 }
+	 redraw();
+}
+});
+
+$('#' + curCanvas).mouseup(function(e) {
+paint = false;
+if(cbrush === 1){
+clickDrag = new Array();
+clickColor = new Array();
+clickSize = new Array();
+clickX = new Array();
+clickY = new Array();
+}
+});
+
+$('#' + curCanvas).mouseleave(function(e){
+paint = false;
+});
+
+
+//clear canvas function
+//make the clear function only work on the current! canvas (i.e. the active one)
+
+$('#clear').click(function(){
+//hmm....you have to 'call' context again  to update. even though you update the curCanvas when going up or down,
+//context doesn't get updated as well? 
+
+context = document.getElementById(curCanvas).getContext("2d");
+context.clearRect(0, 0, theCanvas.width, theCanvas.height);
+
+clickX = new Array();
+clickY = new Array();
+clickDrag = new Array();
+clickColor = new Array();
+clickSize = new Array();
+
+curClickX = new Array();
+curClickY = new Array();
+curClickDrag = new Array();
+curClickColor = new Array();
+curClickSize = new Array();
+});
+
+$(".color").click(function(){
+curColor = this.id;
+});
+
+$(".size").click(function(){
+curSize = this.id;
+});
+
+$("#reset").click(function(){
+cbrush = 0;
+lbrush = 0;
+curSize = 5;
+curColor = '#df4b26';
+});
+
+$("#lbrush").click(function(){
+clickX = new Array();
+clickY = new Array();
+clickDrag = new Array();
+clickColor = new Array();
+clickSize = new Array();
+lbrush = 1;
+cbrush = 0;
+});
+
+$("#cbrush").click(function(){
+clickX = new Array();
+clickY = new Array();
+clickDrag = new Array();
+clickColor = new Array();
+clickSize = new Array();
+lbrush = 0;
+cbrush = 1;
+});
+
+
+};//end draw function
+
+//setting up for adding layers....
+var top = $('#canvas0').position()["top"];  
+var left = $('#canvas0').position()["left"];
+
+$("#addPage").click(addPage);
+
+function addPage(){
+//reset the current arrays so they match only the current canvas data. 
+curClickX = new Array();
+curClickY = new Array();
+curClickDrag = new Array();
+curClickColor = new Array();
+curClickSize = new Array();
+
+page = page + 1;
+var b = $('#canvas0').clone();
+var newId = 'canvas' + page;
+layerArray.push(newId);
+b.addClass('canvas');
+b.attr('id', newId);
+b.css({"position": "absolute", "top": top+"px", "left": left+"px", "z-index":0, "border": "1px black solid", "opacity":.4});
+b.appendTo('#picture');
+};
+
+//clone the previous canvas
+$("#addPrevPage").click(clonePage);
+
+//you need to get all the data points from the previous canvas! transfer the array contents??
+function clonePage(){
+page = page + 1;
+var b = $('#' + curCanvas).clone();//cloning the previous canvas only copies the canvas, not what's in it...
+var newId = 'canvas' + page;
+layerArray.push(newId);
+b.addClass('canvas');
+b.attr('id', newId);
+b.css({"position": "absolute", "top": top+"px", "left": left+"px", "z-index":0, "border": "1px black solid", "opacity":.4});
+b.appendTo('#picture');
+
+var context = document.getElementById(newId).getContext("2d");
+clickX = curClickX;
+clickY = curClickY;
+clickDrag = curClickDrag;
+clickColor = curClickColor;
+clickSize = curClickSize;
+
+function redraw(){
+
+context.lineJoin = 'round';
+
+for(var i = 0; i < clickX.length; i++){
+  context.beginPath();
+  if(clickDrag[i] && i){ //this is the default condition??
+  context.moveTo(clickX[i-1], clickY[i-1]);
+  }
+  else{
+	if(lbrush === 1){
+	cbrush = 0;
+	context.moveTo(clickX[i], clickY[i]+10);
+	}
+	else if(cbrush === 1){
+	lbrush = 0;
+	context.moveTo(clickX[i-2], clickY[i-1]+10);
+	}
+	else{
+	context.moveTo(clickX[i], clickY[i]+1);
+	}
+  }
+  context.lineTo(clickX[i], clickY[i]);
+  context.closePath();
+  context.strokeStyle = clickColor[i];
+  context.lineWidth = clickSize[i]; 
+  context.stroke(); 
+}
+};
+
+redraw();
+};
+
+
+//UP
+function up(){
+if(curPage < page){
+curPage = curPage + 1;
+$('#count').html(curPage);
+curCanvas = layerArray[curPage];
+theCanvas = document.getElementById(curCanvas);
+$('#' + curCanvas).css({"z-index":10, "opacity": 1});
+
+for(i=0;i<layerArray.length;i++){
+if(layerArray[i] !== curCanvas){
+$('#' + layerArray[i]).css({"z-index":0,"opacity":.3});
+$('#' + layerArray[i]).mousedown(function(){ 
+paint = false;
+});
+}
+}
+draw();
+}
+}
+
+//DOWN
+function down(){
+if(curPage > 0){
+curPage = curPage - 1;
+$('#count').html(curPage);
+curCanvas = layerArray[curPage];
+theCanvas = document.getElementById(curCanvas);
+$('#' + curCanvas).css({"z-index":10, "opacity": 1});
+
+for(i=0;i<layerArray.length;i++){
+if(layerArray[i] !== curCanvas){
+$('#' + layerArray[i]).css({"z-index":0,"opacity":.3});
+$('#' + layerArray[i]).mousedown(function(){ 
+paint = false;
+});
+}
+}
+draw();
+}
+};
+
+//COLOR PICKER
+$('#setColor').click(function(){
+var redValue = $('#red').val(); //.val() is for jquery, .value is for regular ecmascript!
+var blueValue = $('#blue').val();
+var greenValue = $('#green').val();
+var newColor = 'rgb(' + redValue + ',' + greenValue + ',' + blueValue + ')';
+$('#showColor').css({'background-color': newColor});
+curColor = newColor;
+});
+
+//start
+
+if(curPage === 0){
+curCanvas = "canvas0";
+theCanvas = document.getElementById(curCanvas);
+for(i=0;i<layerArray.length;i++){
+if(layerArray[i] !== "canvas0"){
+$('#' + layerArray[i]).mousedown(function(){
+paint = false;
+});
+}
+}
+draw();
+}
+
+$("#up").click(up);
+$("#down").click(down);
+
+//keymapping
+$(document).keydown(function(e){
+switch(e.which){
+    case 37: //left arrow key
+	down();
+	break;
+	case 39: //right arrow key
+	up();
+	break;
+	case 32: //space bar
+	addPage();
+	break;
+	default:
+	return;
+	}
+	e.preventDefault();
+});
+
+//end
+
+</script>
+
+</body>
+
+
+</html>
