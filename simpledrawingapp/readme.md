@@ -5,7 +5,12 @@ log of versions...
 <br>
 3. ver112215.html - I binded the spacebar to addLayer() function and utilized Bootstrap better for a uniform layout. I still can't figure out the problem with canvas0 but at least everything else seems to work okay. I think I'll take a break from this for a bit and learn about web scraping, but I hope I come back to this! 
 <br>  
-4. ver112915.html - added a color picker! well, more like custom color maker. I also learned that I need to be mindful of method names and how there are separate ones for jQuery and regular ECMAScript, i.e. val() and .value. 
+4. ver112915.html - added a color picker! well, more like custom color maker. I also learned that I need to be mindful of method names and how there are separate ones for jQuery and regular ECMAScript, i.e. val() and .value.  
+<br>
+5. ver121015.html - restructured the format so that the canvas is on the left and toolbar on the right. I also implemented a copy function so that whatever is drawn on one canvas can be copied on to the succeeding canvas. useful if you spent a long time  
+drawing a background, for example. Getting the canvas to be drawn on properly was difficult after moving the canvas to the left. There was a huge offset initially, in which a pixel drawn was far from where you would click. To remedy this, I set the offset to be based on the container of the canvas (div id='picture') and subtracted a few pixels to the equation. Not perfect, but it produced a more satisfactory product. 
+<br>  
+see the current version here: http://syncopika.tumblr.com/htmldrawapp
 
 ideas:  
 1. add undo/redo     
