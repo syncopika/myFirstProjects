@@ -48,6 +48,9 @@ padding-bottom: 30px;
 
 <div class='col-md-4'></div>
 
+
+
+
 </body>
 
 <script>
@@ -140,21 +143,23 @@ ctx.fillRect(xCoord[i]*5+300,500-yCoord[i]*5,5,5);
 
 };//end button click event
 
-function clearGrid(){
+
 var canvas = document.getElementById('graph');
 var ctx = canvas.getContext("2d");
+
+function clearGrid(){
 ctx.clearRect(0, 0, canvas.width, canvas.height);
 };
 
 clear.onclick = function(){
+xCoord = []; 
+yCoord = [];
 clearGrid();
-drawGrid();
+drawGrid(); 
 };
 
 
 function connectPoints(){
-var canvas = document.getElementById('graph');
-var ctx = canvas.getContext("2d");
 ctx.lineJoin = 'round';
 for(var i = 0; i < xCoord.length; i++){
   ctx.beginPath();
@@ -162,7 +167,7 @@ for(var i = 0; i < xCoord.length; i++){
   ctx.lineTo(xCoord[i]*5+300, 500-yCoord[i]*5);
   ctx.closePath();
   ctx.strokeStyle = 'black';
-  ctx.lineWidth = 4; 
+  ctx.lineWidth = 2; 
   ctx.stroke(); 
 }
 }
@@ -172,13 +177,9 @@ connect.onclick = function(){
 connectPoints();
 }
 
-
 //time to draw on the canvas...(make sure the below also goes within the button onclick event!!)
 function drawGrid(){
-
-var canvas = document.getElementById('graph');
-var ctx = canvas.getContext("2d");
-
+ctx.lineWidth = 1; //without this here, if you connect points and clear, drawGrid() will adopt the lineWidth declared in connectPoints().
 //y-axis lines
 for(i=0;i<600;i=i+10){
 ctx.beginPath();
@@ -187,7 +188,6 @@ ctx.lineTo(i,600);
 ctx.stroke();
 ctx.closePath();
 }
-
 //x-axis lines
 for(i=0;i<600;i=i+10){
 ctx.beginPath();
