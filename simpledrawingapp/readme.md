@@ -12,7 +12,9 @@ drawing a background, for example. Getting the canvas to be drawn on properly wa
 <br>    
 6. ver012616.html - made the cloning feature applicable to any canvas, not just the last one as it previously was, by storing all pixel data of each canvas in an object. this may be helpful when manipulating pixels during filter application, for example. I hope to add filter features later. also fixed the buggy initial canvas (canvas0) by moving a couple variables outside the draw() function so that they could be overwritten appropirately. 
 <br>    
-see the current version here: http://syncopika.tumblr.com/htmldrawapp
+see the current version here: http://syncopika.tumblr.com/htmldrawapp    
+<hr>
+***** new updates to this program will be here: https://github.com/syncopika/html_drawing_app *****
 
 ideas:  
 1. add undo/redo     
